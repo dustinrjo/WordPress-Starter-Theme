@@ -1,7 +1,8 @@
 // Load plugins
 var gulp = require('gulp'),
-	plugins = require('gulp-load-plugins')({ camelize: true }),
-	lr = require('tiny-lr'),
+	plugins = require('gulp-load-plugins')({ camelize: true });
+	lr = require('tiny-lr');
+	livereload = require('gulp-livereload');
 	server = lr();
 
 // Styles
@@ -11,7 +12,8 @@ gulp.task('styles', function() {
 	.pipe(plugins.autoprefixer('last 2 versions', 'ie 9', 'ios 6', 'android 4'))
 	.pipe(gulp.dest('assets/styles/build'))
 	.pipe(plugins.minifyCss({ keepSpecialComments: 1 }))
-	.pipe(plugins.livereload(server))
+	// .pipe(plugins.livereload(server))
+	.pipe(plugins.livereload())
 	.pipe(gulp.dest('./'))
 	.pipe(plugins.notify({ message: 'Styles task complete' }));
 });
@@ -23,7 +25,8 @@ gulp.task('plugins', function() {
 	.pipe(gulp.dest('assets/js/build'))
 	.pipe(plugins.rename({ suffix: '.min' }))
 	.pipe(plugins.uglify())
-	.pipe(plugins.livereload(server))
+	// .pipe(plugins.lr())
+	.pipe(plugins.livereload())
 	.pipe(gulp.dest('assets/js'))
 	.pipe(plugins.notify({ message: 'Scripts task complete' }));
 });
@@ -37,7 +40,8 @@ gulp.task('scripts', function() {
 	.pipe(gulp.dest('assets/js/build'))
 	.pipe(plugins.rename({ suffix: '.min' }))
 	.pipe(plugins.uglify())
-	.pipe(plugins.livereload(server))
+	.pipe(plugins.livereload())
+	// .pipe(plugins.lr())
 	.pipe(gulp.dest('assets/js'))
 	.pipe(plugins.notify({ message: 'Scripts task complete' }));
 });
@@ -46,7 +50,9 @@ gulp.task('scripts', function() {
 gulp.task('images', function() {
   return gulp.src('assets/images/**/*')
 	.pipe(plugins.cache(plugins.imagemin({ optimizationLevel: 7, progressive: true, interlaced: true })))
-	.pipe(plugins.livereload(server))
+	// .pipe(plugins.livereload(server))
+	// .pipe(plugins.lr())
+	.pipe(plugins.livereload())
 	.pipe(gulp.dest('assets/images'))
 	.pipe(plugins.notify({ message: 'Images task complete' }));
 });
@@ -55,21 +61,23 @@ gulp.task('images', function() {
 gulp.task('watch', function() {
 
   // Listen on port 35729
-  server.listen(35729, function (err) {
-	if (err) {
-	  return console.log(err)
-	};
+ //  server.listen(35729, function (err) {
+	// if (err) {
+	//   return console.log(err)
+	// };
+
+	livereload.listen();
 
 	// Watch .scss files
-	gulp.watch('assets/styles/**/*.scss', ['styles']);
+	gulp.watch('assets/styles/**/*.scss', ['styles']).on('change', livereload.changed);
 
 	// Watch .js files
-	gulp.watch('assets/js/**/*.js', ['plugins', 'scripts']);
+	gulp.watch('assets/js/**/*.js', ['plugins', 'scripts']).on('change', livereload.changed);
 
 	// Watch image files
-	gulp.watch('assets/images/**/*', ['images']);
+	gulp.watch('assets/images/**/*', ['images']).on('change', livereload.changed);
 
-  });
+  // });
 
 });
 

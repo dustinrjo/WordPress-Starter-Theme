@@ -2,4 +2,11 @@
    Blog pages
    ========================================================================== */
 
-body.blog { }
+h1 {
+  color: tomato !important;
+}
+body.blog {
+  .simple {
+    width: 20px;
+  }
+}
